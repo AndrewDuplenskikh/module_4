@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Router {
+    // TODO arrayList => map
     private final ArrayList<RequestHandler> requestHandlers = new ArrayList<RequestHandler>();
     private final BufferedReader input;
     private final OutputStream outputStream;
