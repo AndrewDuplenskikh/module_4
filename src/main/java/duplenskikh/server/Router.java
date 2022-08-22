@@ -1,6 +1,7 @@
 package duplenskikh.server;
 
 import duplenskikh.server.requestHandlers.ErrorRequestHandler;
+import duplenskikh.server.requestHandlers.FormRequestHandler;
 import duplenskikh.server.requestHandlers.MyRequestHandler;
 import duplenskikh.server.requestHandlers.RequestHandler;
 
@@ -12,37 +13,41 @@ public class Router {
     private final ArrayList<RequestHandler> requestHandlers = new ArrayList<RequestHandler>();
     private final BufferedReader input;
     private final OutputStream outputStream;
-    private final RequestHandler errorRequestHandler = new ErrorRequestHandler("/error", "error.html");
+    private final RequestHandler errorRequestHandler = new ErrorRequestHandler(new Request("/error", "GET"), "error.html");
 
     public Router(InputStream inputStream, OutputStream outputStream) {
         input = new BufferedReader(new InputStreamReader(inputStream));
         this.outputStream = outputStream;
-        requestHandlers.add(new MyRequestHandler("/", "index.html"));
-        requestHandlers.add(new MyRequestHandler("/another", "another.html"));
+        requestHandlers.add(new MyRequestHandler(new Request("/", "GET"), "index.html"));
+        requestHandlers.add(new MyRequestHandler(new Request("/another", "GET"), "another.html"));
+        requestHandlers.add(new FormRequestHandler(new Request("/post-data", "POST")));
     }
 
     public void listen() {
-        String route = getRequestRoute();
-        RequestHandler requestHandler = findRequestHandlerRoute(route);
-        requestHandler.handleRequest(outputStream);
+        Request request = getRequestData();
+        RequestHandler requestHandler = findRequestHandler(request);
+        requestHandler.handleRequest(outputStream, input);
     }
 
-    private String getRequestRoute() {
+    private Request getRequestData() {
         try {
             String inputData = input.readLine();
+            if (inputData == null) {
+                return null;
+            }
             String[] arr = inputData.split(" ");
             String method = arr[0];
             String route = arr[1];
-            return route;
+            return new Request(route, method);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private RequestHandler findRequestHandlerRoute(String route) {
+    private RequestHandler findRequestHandler(Request request) {
         for (RequestHandler requestHandler : requestHandlers) {
-            if (requestHandler.getRoute().equals(route)) {
+            if (requestHandler.getMethod().equals(request.getMethod()) && requestHandler.getRoute().equals(request.getRoute())) {
                 return requestHandler;
             }
         }

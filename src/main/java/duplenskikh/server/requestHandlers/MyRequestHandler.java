@@ -1,26 +1,33 @@
 package duplenskikh.server.requestHandlers;
 
 import duplenskikh.server.HtmlReader;
+import duplenskikh.server.Request;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 
 public class MyRequestHandler implements RequestHandler {
-    private final String route;
+    private final Request request;
     private final String filename;
 
-    public MyRequestHandler(String route, String filename) {
-        this.route = route;
+    public MyRequestHandler(Request request, String filename) {
+        this.request = request;
         this.filename = filename;
     }
 
     @Override
     public String getRoute() {
-        return route;
+        return request.getRoute();
     }
 
     @Override
-    public void handleRequest(OutputStream outputStream) {
+    public String getMethod() {
+        return request.getMethod();
+    }
+
+    @Override
+    public void handleRequest(OutputStream outputStream, Reader reader) {
         String response = HtmlReader.readHtml(filename);
         PrintWriter output = new PrintWriter(outputStream);
         output.println("HTTP/1.1 200 OK");

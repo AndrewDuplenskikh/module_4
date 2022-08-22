@@ -24,6 +24,8 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.21.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation "mysql:mysql-connector-java:5.1.49"
+    compile 'org.eclipse.jetty:jetty-server:9.4.3.v20170317'
+    compile 'org.eclipse.jetty:jetty-servlet:9.4.3.v20170317'
 }
 
 test {

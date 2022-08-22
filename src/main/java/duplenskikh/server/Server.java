@@ -7,8 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class Server {
-    public static void start() {
+public class Server extends Thread {
+    @Override
+    public void run() {
         try (ServerSocket serverSocket = new ServerSocket(8000)) {
             while (true) {
                 Socket socket = serverSocket.accept();
